@@ -1,0 +1,34 @@
+{
+  "name": "@asdlc/ui-components-preview",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "storybook": "storybook dev -p 6100",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@asdlc/cell-diagram-view": "workspace:*",
+    "@asdlc/excalidraw-dsl": "workspace:*",
+    "@asdlc/excalidraw-editor": "workspace:*",
+    "@asdlc/explorer": "workspace:*",
+    "@asdlc/md-editor": "workspace:*",
+    "@asdlc/openapi-view": "workspace:*",
+    "@asdlc/project-status": "workspace:*"
+  },
+  "devDependencies": {
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@mui/material": "7.3.4",
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.0.2",
+    "@wso2/oxygen-ui": "0.1.0",
+    "@wso2/oxygen-ui-icons-react": "0.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "storybook": "^10.3.5",
+    "typescript": "5.9.3"
+  }
+}

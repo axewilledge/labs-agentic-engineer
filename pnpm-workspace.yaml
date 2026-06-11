@@ -1,6 +1,7 @@
 packages:
   - console
   - ui-components/*
+  - ui-components-preview
 
 allowBuilds:
   "@swc/core": true
