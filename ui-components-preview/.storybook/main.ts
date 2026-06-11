@@ -16,15 +16,33 @@
  * under the License.
  */
 
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { StorybookConfig } from '@storybook/react-vite';
+
+const configDir = path.dirname(fileURLToPath(import.meta.url));
+const previewRoot = path.resolve(configDir, '..');
+const repoRoot = path.resolve(previewRoot, '..');
+const uiComponentsDir = path.join(repoRoot, 'ui-components');
 
 const config: StorybookConfig = {
   stories: [
-    '../ui-components/*/src/**/*.mdx',
-    '../ui-components/*/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    path.join(uiComponentsDir, '*/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'),
   ],
   addons: ['@storybook/addon-docs'],
   framework: '@storybook/react-vite',
+  async viteFinal(viteConfig) {
+    return {
+      ...viteConfig,
+      server: {
+        ...viteConfig.server,
+        fs: {
+          ...viteConfig.server?.fs,
+          allow: [repoRoot],
+        },
+      },
+    };
+  },
 };
 
 export default config;
