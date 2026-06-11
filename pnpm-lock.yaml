@@ -128,7 +128,7 @@ importers:
         version: 7.2.2
 
   ui-components-preview:
-    dependencies:
+    devDependencies:
       '@asdlc/cell-diagram-view':
         specifier: workspace:*
         version: link:../ui-components/cell-diagram-view
@@ -150,7 +150,6 @@ importers:
       '@asdlc/project-status':
         specifier: workspace:*
         version: link:../ui-components/project-status
-    devDependencies:
       '@emotion/react':
         specifier: 11.14.0
         version: 11.14.0(@types/react@19.1.6)(react@19.2.3)

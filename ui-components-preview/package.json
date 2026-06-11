@@ -5,18 +5,17 @@
   "type": "module",
   "scripts": {
     "storybook": "storybook dev -p 6100",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
+  "devDependencies": {
     "@asdlc/cell-diagram-view": "workspace:*",
     "@asdlc/excalidraw-dsl": "workspace:*",
     "@asdlc/excalidraw-editor": "workspace:*",
     "@asdlc/explorer": "workspace:*",
     "@asdlc/md-editor": "workspace:*",
     "@asdlc/openapi-view": "workspace:*",
-    "@asdlc/project-status": "workspace:*"
-  },
-  "devDependencies": {
+    "@asdlc/project-status": "workspace:*",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
     "@mui/material": "7.3.4",

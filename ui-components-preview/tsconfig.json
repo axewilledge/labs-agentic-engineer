@@ -10,7 +10,11 @@
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "strict": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [".storybook"]
 }
