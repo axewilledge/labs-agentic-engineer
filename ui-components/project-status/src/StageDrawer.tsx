@@ -17,20 +17,22 @@
  */
 
 import { Drawer, Box, Stack, Typography, IconButton, Chip, Divider } from '@mui/material';
-import { useTheme, alpha } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { resolveStateMeta } from './stateMeta.js';
+import { useEffectiveColorMode } from './useEffectiveColorMode.js';
+import { themePalette, withAlpha } from './themePalette.js';
 import type { StageDrawerProps } from './types.js';
 
 export function StageDrawer({ stage, open, onClose, mode }: StageDrawerProps) {
   const theme = useTheme();
-  const effectiveMode = mode ?? theme.palette.mode;
-  const isDark = effectiveMode === 'dark';
+  const { isDark } = useEffectiveColorMode(mode);
+  const c = themePalette(theme);
 
   if (!stage) return null;
 
-  const meta = resolveStateMeta(theme, stage.state);
-  const muted = theme.palette.text.secondary;
-  const chipBg = alpha(theme.palette.text.primary, isDark ? 0.06 : 0.04);
+  const meta = resolveStateMeta(theme, stage.state, isDark);
+  const muted = c.textSecondary;
+  const chipBg = withAlpha(c.textPrimary, isDark ? 0.06 : 0.04);
 
   const changes = stage.changes ?? [];
   const metrics = stage.metrics ?? [];
@@ -46,8 +48,8 @@ export function StageDrawer({ stage, open, onClose, mode }: StageDrawerProps) {
           sx: {
             width: 420,
             maxWidth: '100vw',
-            backgroundColor: theme.palette.background.paper,
-            color: theme.palette.text.primary,
+            backgroundColor: c.paper,
+            color: c.textPrimary,
           },
         },
       }}
@@ -59,7 +61,7 @@ export function StageDrawer({ stage, open, onClose, mode }: StageDrawerProps) {
             px: 3,
             pt: 2.5,
             pb: 2.25,
-            borderBottom: `1px solid ${theme.palette.divider}`,
+            borderBottom: `1px solid ${c.divider}`,
             display: 'flex',
             alignItems: 'flex-start',
             gap: 1.5,
@@ -119,7 +121,7 @@ export function StageDrawer({ stage, open, onClose, mode }: StageDrawerProps) {
                 fontSize: 14.5,
                 lineHeight: 1.55,
                 mb: 2.75,
-                color: theme.palette.text.primary,
+                color: c.textPrimary,
               }}
             >
               {stage.summary}
@@ -216,7 +218,7 @@ export function StageDrawer({ stage, open, onClose, mode }: StageDrawerProps) {
                       fontSize: 12,
                       height: 24,
                       backgroundColor: chipBg,
-                      color: theme.palette.text.primary,
+                      color: c.textPrimary,
                       borderRadius: 0.75,
                     }}
                   />

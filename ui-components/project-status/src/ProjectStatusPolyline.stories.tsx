@@ -17,8 +17,6 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { ProjectStatusPolyline } from './ProjectStatusPolyline.js';
 import type { Stage } from './types.js';
 
@@ -144,13 +142,6 @@ const meta: Meta<typeof ProjectStatusPolyline> = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [
-    (Story) => (
-      <div style={{ padding: 32, background: '#f0eee9', minHeight: '100vh' }}>
-        <Story />
-      </div>
-    ),
-  ],
 };
 
 export default meta;
@@ -178,24 +169,6 @@ export const AllPending: Story = {
   args: {
     stages: STAGES_ALL_PENDING,
   },
-};
-
-const darkTheme = createTheme({ palette: { mode: 'dark' } });
-
-export const DarkMode: Story = {
-  args: {
-    stages: STAGES_DEMO,
-  },
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <div style={{ padding: 32, background: '#0f0d0a', minHeight: '100vh' }}>
-          <Story />
-        </div>
-      </ThemeProvider>
-    ),
-  ],
 };
 
 export const ClickHandlerOverride: Story = {

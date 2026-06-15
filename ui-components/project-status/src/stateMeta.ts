@@ -17,8 +17,8 @@
  */
 
 import type { Theme } from '@mui/material/styles';
-import { alpha } from '@mui/material/styles';
 import type { StageState } from './types.js';
+import { themePalette, withAlpha } from './themePalette.js';
 
 export interface ResolvedStateMeta {
   label: string;
@@ -27,37 +27,41 @@ export interface ResolvedStateMeta {
   pillText: string;
 }
 
-export function resolveStateMeta(theme: Theme, state: StageState): ResolvedStateMeta {
-  const isDark = theme.palette.mode === 'dark';
+export function resolveStateMeta(
+  theme: Theme,
+  state: StageState,
+  isDark = theme.palette.mode === 'dark',
+): ResolvedStateMeta {
+  const c = themePalette(theme);
   switch (state) {
     case 'done':
       return {
         label: 'Complete',
-        dot: theme.palette.success.main,
-        pillBg: alpha(theme.palette.success.main, isDark ? 0.18 : 0.1),
-        pillText: isDark ? theme.palette.success.light : theme.palette.success.dark,
+        dot: c.successMain,
+        pillBg: withAlpha(c.successMain, isDark ? 0.18 : 0.1),
+        pillText: isDark ? c.successLight : c.successDark,
       };
     case 'active':
       return {
         label: 'Running',
-        dot: theme.palette.primary.main,
-        pillBg: alpha(theme.palette.primary.main, isDark ? 0.2 : 0.12),
-        pillText: isDark ? theme.palette.primary.light : theme.palette.primary.dark,
+        dot: c.primaryMain,
+        pillBg: withAlpha(c.primaryMain, isDark ? 0.2 : 0.12),
+        pillText: isDark ? c.primaryLight : c.primaryDark,
       };
     case 'blocked':
       return {
         label: 'Blocked',
-        dot: theme.palette.error.main,
-        pillBg: alpha(theme.palette.error.main, isDark ? 0.18 : 0.12),
-        pillText: isDark ? theme.palette.error.light : theme.palette.error.dark,
+        dot: c.errorMain,
+        pillBg: withAlpha(c.errorMain, isDark ? 0.18 : 0.12),
+        pillText: isDark ? c.errorLight : c.errorDark,
       };
     case 'pending':
     default:
       return {
         label: 'Pending',
-        dot: theme.palette.text.disabled,
-        pillBg: alpha(theme.palette.text.disabled, isDark ? 0.18 : 0.12),
-        pillText: theme.palette.text.secondary,
+        dot: c.textDisabled,
+        pillBg: withAlpha(c.textDisabled, isDark ? 0.18 : 0.12),
+        pillText: c.textSecondary,
       };
   }
 }

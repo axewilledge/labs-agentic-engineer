@@ -17,9 +17,10 @@
  */
 
 import { useMemo, useState } from 'react';
-import { useTheme, alpha } from '@mui/material/styles';
-import type { Theme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { StageDrawer } from './StageDrawer.js';
+import { useEffectiveColorMode } from './useEffectiveColorMode.js';
+import { themePalette, withAlpha, type ThemePalette } from './themePalette.js';
 import type {
   ProjectStatusPolylineProps,
   Stage,
@@ -173,10 +174,10 @@ interface PuckColors {
   glow?: string;
 }
 
-function puckColors(theme: Theme, status: DerivedStatus, isDark: boolean): PuckColors {
-  const surface = theme.palette.background.paper;
-  const line = theme.palette.divider;
-  const subtle = theme.palette.text.disabled;
+function puckColors(c: ThemePalette, status: DerivedStatus, isDark: boolean): PuckColors {
+  const surface = c.paper;
+  const line = c.divider;
+  const subtle = c.textDisabled;
   // Tinted but OPAQUE bg via color-mix so the progress rail behind the puck
   // doesn't bleed through. `alpha()` returned a translucent overlay which
   // let the dark-green progress line read through the light-green puck.
@@ -185,28 +186,28 @@ function puckColors(theme: Theme, status: DerivedStatus, isDark: boolean): PuckC
   switch (status) {
     case 'done':
       return {
-        bg: tint(theme.palette.success.main, isDark ? 18 : 14),
-        border: theme.palette.success.main,
-        fg: isDark ? theme.palette.success.light : theme.palette.success.dark,
+        bg: tint(c.successMain, isDark ? 18 : 14),
+        border: c.successMain,
+        fg: isDark ? c.successLight : c.successDark,
       };
     case 'active':
       return {
-        bg: tint(theme.palette.primary.main, isDark ? 20 : 14),
-        border: theme.palette.primary.main,
-        fg: isDark ? theme.palette.primary.light : theme.palette.primary.dark,
-        glow: alpha(theme.palette.primary.main, 0.28),
+        bg: tint(c.primaryMain, isDark ? 20 : 14),
+        border: c.primaryMain,
+        fg: isDark ? c.primaryLight : c.primaryDark,
+        glow: withAlpha(c.primaryMain, 0.28),
       };
     case 'next':
       return {
         bg: surface,
-        border: theme.palette.primary.main,
-        fg: isDark ? theme.palette.primary.light : theme.palette.primary.dark,
+        border: c.primaryMain,
+        fg: isDark ? c.primaryLight : c.primaryDark,
       };
     case 'blocked':
       return {
-        bg: tint(theme.palette.error.main, isDark ? 18 : 14),
-        border: theme.palette.error.main,
-        fg: isDark ? theme.palette.error.light : theme.palette.error.dark,
+        bg: tint(c.errorMain, isDark ? 18 : 14),
+        border: c.errorMain,
+        fg: isDark ? c.errorLight : c.errorDark,
       };
     case 'queued':
     default:
@@ -216,33 +217,33 @@ function puckColors(theme: Theme, status: DerivedStatus, isDark: boolean): PuckC
 
 function StatePill({
   state,
-  theme,
+  c,
   isDark,
 }: {
   state: ProjectState;
-  theme: Theme;
+  c: ThemePalette;
   isDark: boolean;
 }) {
   const monoFamily = `'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace`;
-  let bg = alpha(theme.palette.text.primary, isDark ? 0.06 : 0.04);
-  let fg = theme.palette.text.secondary;
+  let bg = withAlpha(c.textPrimary, isDark ? 0.06 : 0.04);
+  let fg = c.textSecondary;
   let label = 'Paused';
   let dotPulse = false;
   switch (state) {
     case 'active':
-      bg = alpha(theme.palette.primary.main, isDark ? 0.22 : 0.14);
-      fg = isDark ? theme.palette.primary.light : theme.palette.primary.dark;
+      bg = withAlpha(c.primaryMain, isDark ? 0.22 : 0.14);
+      fg = isDark ? c.primaryLight : c.primaryDark;
       label = 'In progress';
       dotPulse = true;
       break;
     case 'done':
-      bg = alpha(theme.palette.success.main, isDark ? 0.2 : 0.12);
-      fg = isDark ? theme.palette.success.light : theme.palette.success.dark;
+      bg = withAlpha(c.successMain, isDark ? 0.2 : 0.12);
+      fg = isDark ? c.successLight : c.successDark;
       label = 'Shipped';
       break;
     case 'blocked':
-      bg = alpha(theme.palette.error.main, isDark ? 0.2 : 0.14);
-      fg = isDark ? theme.palette.error.light : theme.palette.error.dark;
+      bg = withAlpha(c.errorMain, isDark ? 0.2 : 0.14);
+      fg = isDark ? c.errorLight : c.errorDark;
       label = 'Blocked';
       break;
     default:
@@ -261,7 +262,7 @@ function StatePill({
         letterSpacing: '0.02em',
         background: bg,
         color: fg,
-        border: state === 'paused' ? `1px solid ${theme.palette.divider}` : '1px solid transparent',
+        border: state === 'paused' ? `1px solid ${c.divider}` : '1px solid transparent',
       }}
     >
       <span
@@ -289,8 +290,8 @@ export function ProjectStatusPolyline({
   focus,
 }: ProjectStatusPolylineProps) {
   const theme = useTheme();
-  const effectiveMode = mode ?? theme.palette.mode;
-  const isDark = effectiveMode === 'dark';
+  const { isDark } = useEffectiveColorMode(mode);
+  const c = themePalette(theme);
   const [picked, setPicked] = useState<Stage | null>(null);
 
   const statuses = useMemo(() => deriveStatuses(stages), [stages]);
@@ -302,15 +303,15 @@ export function ProjectStatusPolyline({
 
   const cols = stages.length || 1;
 
-  const surface = theme.palette.background.paper;
-  const text = theme.palette.text.primary;
-  const muted = theme.palette.text.secondary;
-  const subtle = theme.palette.text.disabled;
-  const line = theme.palette.divider;
-  const lineSoft = alpha(theme.palette.text.primary, isDark ? 0.06 : 0.08);
-  const accent = theme.palette.primary.main;
-  const done = theme.palette.success.main;
-  const sunk = alpha(theme.palette.text.primary, isDark ? 0.08 : 0.05);
+  const surface = c.paper;
+  const text = c.textPrimary;
+  const muted = c.textSecondary;
+  const subtle = c.textDisabled;
+  const line = c.divider;
+  const lineSoft = withAlpha(c.textPrimary, isDark ? 0.06 : 0.08);
+  const accent = c.primaryMain;
+  const done = c.successMain;
+  const sunk = withAlpha(c.textPrimary, isDark ? 0.08 : 0.05);
   const fontFamily = theme.typography.fontFamily;
   const monoFamily = `'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace`;
 
@@ -333,18 +334,18 @@ export function ProjectStatusPolyline({
   let eyebrowDotBg = subtle;
   let eyebrowDotPulse = false;
   if (eyebrowKey === 'currently') {
-    eyebrowColor = isDark ? theme.palette.primary.light : theme.palette.primary.dark;
+    eyebrowColor = isDark ? c.primaryLight : c.primaryDark;
     eyebrowDotBg = accent;
     eyebrowDotPulse = true;
   } else if (eyebrowKey === 'next') {
-    eyebrowColor = isDark ? theme.palette.primary.light : theme.palette.primary.dark;
+    eyebrowColor = isDark ? c.primaryLight : c.primaryDark;
     eyebrowDotBg = accent;
   } else if (eyebrowKey === 'shipped') {
-    eyebrowColor = isDark ? theme.palette.success.light : theme.palette.success.dark;
+    eyebrowColor = isDark ? c.successLight : c.successDark;
     eyebrowDotBg = done;
   } else if (eyebrowKey === 'blocked') {
-    eyebrowColor = isDark ? theme.palette.error.light : theme.palette.error.dark;
-    eyebrowDotBg = theme.palette.error.main;
+    eyebrowColor = isDark ? c.errorLight : c.errorDark;
+    eyebrowDotBg = c.errorMain;
   }
 
   return (
@@ -356,7 +357,7 @@ export function ProjectStatusPolyline({
         padding: '36px 40px 40px',
         borderRadius: 14,
         border: `1px solid ${line}`,
-        boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+        boxShadow: isDark ? '0 1px 2px rgba(0,0,0,0.24)' : '0 1px 2px rgba(0,0,0,0.02)',
         boxSizing: 'border-box',
       }}
     >
@@ -432,7 +433,7 @@ export function ProjectStatusPolyline({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
-            <StatePill state={effectiveState} theme={theme} isDark={isDark} />
+            <StatePill state={effectiveState} c={c} isDark={isDark} />
             <div
               style={{
                 display: 'flex',
@@ -553,7 +554,7 @@ export function ProjectStatusPolyline({
         >
           {stages.map((stage, i) => {
             const status = statuses[i];
-            const colors = puckColors(theme, status, isDark);
+            const colors = puckColors(c, status, isDark);
             const isActive = status === 'active';
             const isNext = status === 'next';
             const isQueued = status === 'queued';
