@@ -18,6 +18,7 @@
 
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Button, Stack, Typography } from '@wso2/oxygen-ui';
 import { MdEditor } from './MdEditor.js';
 import { useEditorStorage } from './hooks/useEditorStorage.js';
 
@@ -187,65 +188,30 @@ export const WithPersistence: Story = {
 
     return (
       <div>
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            alignItems: 'center',
-            marginBottom: '12px',
-          }}
-        >
-          <button
-            type="button"
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+          <Button
+            variant="outlined"
+            size="small"
             onClick={storage.undo}
             disabled={!storage.canUndo}
-            style={{
-              padding: '6px 14px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              background: storage.canUndo ? '#fff' : '#f5f5f5',
-              color: storage.canUndo ? '#333' : '#aaa',
-              cursor: storage.canUndo ? 'pointer' : 'default',
-              fontSize: '13px',
-            }}
           >
             Undo
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
             onClick={storage.redo}
             disabled={!storage.canRedo}
-            style={{
-              padding: '6px 14px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              background: storage.canRedo ? '#fff' : '#f5f5f5',
-              color: storage.canRedo ? '#333' : '#aaa',
-              cursor: storage.canRedo ? 'pointer' : 'default',
-              fontSize: '13px',
-            }}
           >
             Redo
-          </button>
-          <button
-            type="button"
-            onClick={storage.clear}
-            style={{
-              padding: '6px 14px',
-              border: '1px solid #e0b0b0',
-              borderRadius: '4px',
-              background: '#fff',
-              color: '#d32f2f',
-              cursor: 'pointer',
-              fontSize: '13px',
-            }}
-          >
+          </Button>
+          <Button variant="outlined" size="small" color="error" onClick={storage.clear}>
             Clear Storage
-          </button>
-          <span style={{ fontSize: '12px', color: '#888', marginLeft: '8px' }}>
+          </Button>
+          <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
             Content persists across page reloads. Try editing, then refresh.
-          </span>
-        </div>
+          </Typography>
+        </Stack>
         <MdEditor
           value={storage.value}
           onChange={storage.onChange}
