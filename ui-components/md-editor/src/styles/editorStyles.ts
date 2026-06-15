@@ -23,9 +23,7 @@
  * and still has reasonable defaults when used standalone.
  */
 
-// Resolve a color via Oxygen -> MUI -> hardcoded fallback.
-const c = (name: string, fallback: string) =>
-  `var(--oxygen-palette-${name}, var(--mui-palette-${name}, ${fallback}))`;
+import { paletteVar } from './paletteVar.js';
 
 export const editorContentStyles: Record<string, string | Record<string, string | Record<string, string>>> = {
   '.tiptap': {
@@ -33,7 +31,7 @@ export const editorContentStyles: Record<string, string | Record<string, string 
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     fontSize: '14px',
     lineHeight: '1.7',
-    color: c('text-primary', '#1a1a1a'),
+    color: paletteVar('text-primary', '#1a1a1a'),
   },
   '.tiptap h1': {
     fontSize: '1.75em',
@@ -72,24 +70,24 @@ export const editorContentStyles: Record<string, string | Record<string, string 
     marginBottom: '0',
   },
   '.tiptap blockquote': {
-    borderLeft: `3px solid ${c('divider', '#d0d0d0')}`,
+    borderLeft: `3px solid ${paletteVar('divider', '#d0d0d0')}`,
     marginLeft: '0',
     marginRight: '0',
     paddingLeft: '1em',
-    color: c('text-secondary', '#666'),
+    color: paletteVar('text-secondary', '#666'),
     fontStyle: 'italic',
   },
   '.tiptap code': {
-    backgroundColor: c('action-hover', '#f0f0f0'),
-    color: c('text-primary', '#1a1a1a'),
+    backgroundColor: paletteVar('action-hover', '#f0f0f0'),
+    color: paletteVar('text-primary', '#1a1a1a'),
     borderRadius: '3px',
     padding: '0.15em 0.35em',
     fontSize: '0.9em',
     fontFamily: '"Fira Code", "Cascadia Code", Consolas, monospace',
   },
   '.tiptap pre': {
-    backgroundColor: c('action-selected', '#f5f5f5'),
-    color: c('text-primary', '#1a1a1a'),
+    backgroundColor: paletteVar('action-selected', '#f5f5f5'),
+    color: paletteVar('text-primary', '#1a1a1a'),
     borderRadius: '6px',
     padding: '0.75em 1em',
     overflow: 'auto',
@@ -103,17 +101,17 @@ export const editorContentStyles: Record<string, string | Record<string, string 
     fontSize: '0.875em',
   },
   '.tiptap a': {
-    color: c('primary-main', '#1976d2'),
+    color: paletteVar('primary-main', '#1976d2'),
     textDecoration: 'underline',
     cursor: 'pointer',
   },
   '.tiptap hr': {
     border: 'none',
-    borderTop: `1px solid ${c('divider', '#e0e0e0')}`,
+    borderTop: `1px solid ${paletteVar('divider', '#e0e0e0')}`,
     margin: '1.5em 0',
   },
   '.tiptap p.is-editor-empty:first-child::before': {
-    color: c('text-disabled', '#adb5bd'),
+    color: paletteVar('text-disabled', '#adb5bd'),
     content: 'attr(data-placeholder)',
     float: 'left',
     height: '0',

@@ -16,32 +16,56 @@
  * under the License.
  */
 
+import { paletteVar } from './paletteVar.js';
+
+const success = paletteVar('success-main', '#2e7d32');
+const successFg = paletteVar('success-dark', '#22633a');
+const successFgDark = paletteVar('success-light', '#86efac');
+const error = paletteVar('error-main', '#d32f2f');
+const errorFg = paletteVar('error-dark', '#991b1b');
+const errorFgDark = paletteVar('error-light', '#fca5a5');
+
+const addedBg = `color-mix(in srgb, ${success} 18%, transparent)`;
+const removedBg = `color-mix(in srgb, ${error} 18%, transparent)`;
+
 /** CSS styles for diff marks and decorations in the TipTap editor. */
 export const diffContentStyles: Record<string, Record<string, string>> = {
   // Mark-based styles (MdDiffViewer)
   '.tiptap ins.diff-added': {
-    backgroundColor: 'rgba(34, 139, 34, 0.15)',
-    color: '#22633a',
+    backgroundColor: addedBg,
+    color: successFg,
     textDecoration: 'none',
   },
+  ':root[data-mui-color-scheme="dark"] .tiptap ins.diff-added, :root[data-color-scheme="dark"] .tiptap ins.diff-added':
+    {
+      color: successFgDark,
+    },
   '.tiptap del.diff-removed': {
-    backgroundColor: 'rgba(220, 38, 38, 0.15)',
-    color: '#991b1b',
+    backgroundColor: removedBg,
+    color: errorFg,
     textDecoration: 'line-through',
   },
+  ':root[data-mui-color-scheme="dark"] .tiptap del.diff-removed, :root[data-color-scheme="dark"] .tiptap del.diff-removed':
+    {
+      color: errorFgDark,
+    },
   // Decoration-based styles (inline diff mode)
   '.tiptap .diff-added': {
-    backgroundColor: 'rgba(34, 139, 34, 0.15)',
+    backgroundColor: addedBg,
     borderRadius: '2px',
   },
   '.tiptap .diff-removed-widget': {
-    backgroundColor: 'rgba(220, 38, 38, 0.15)',
-    color: '#991b1b',
+    backgroundColor: removedBg,
+    color: errorFg,
     textDecoration: 'line-through',
     userSelect: 'none',
     pointerEvents: 'none',
     borderRadius: '2px',
   },
+  ':root[data-mui-color-scheme="dark"] .tiptap .diff-removed-widget, :root[data-color-scheme="dark"] .tiptap .diff-removed-widget':
+    {
+      color: errorFgDark,
+    },
 };
 
 /** Convert diff style object to CSS string. */

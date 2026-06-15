@@ -18,6 +18,7 @@
 
 import { useEffect, useRef, useId, useMemo, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
+import { Box, ButtonBase } from '@wso2/oxygen-ui';
 import { createExtensions } from './extensions/index.js';
 import { computeDiffDocument } from './diff/computeDiff.js';
 import { editorStylesToCss } from './styles/editorStyles.js';
@@ -97,50 +98,54 @@ export function MdDiffViewer({
   }, [editor, mode, diffDoc, newMarkdown]);
 
   return (
-    <div
+    <Box
       className={className}
-      style={{
+      sx={{
         width: '100%',
-        border: '1px solid #e0e0e0',
-        borderRadius: '6px',
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: 1,
         overflow: 'hidden',
-        background: '#fff',
+        bgcolor: 'background.paper',
       }}
     >
       <ModeToolbar mode={mode} onChange={setMode} />
-      <div
-        style={{
+      <Box
+        sx={{
           minHeight: `${minHeight}px`,
           maxHeight: maxHeight ? `${maxHeight}px` : undefined,
           overflowY: maxHeight ? 'auto' : undefined,
           cursor: 'default',
         }}
       >
-        <div
-          style={{
+        <Box
+          sx={{
             maxWidth: '816px',
-            margin: '0 auto',
-            padding: '12px 16px',
+            mx: 'auto',
+            px: 2,
+            py: 1.5,
           }}
         >
           <EditorContent editor={editor} />
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 
 function ModeToolbar({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: '2px',
-        padding: '4px 8px',
-        borderBottom: '1px solid #e0e0e0',
-        background: '#fafafa',
+        gap: 0.25,
+        px: 1,
+        py: 0.5,
+        borderBottom: 1,
+        borderColor: 'divider',
+        bgcolor: 'background.default',
       }}
     >
       <ModeButton
@@ -155,7 +160,7 @@ function ModeToolbar({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => vo
         active={mode === 'view'}
         onClick={() => onChange('view')}
       />
-    </div>
+    </Box>
   );
 }
 
@@ -171,35 +176,30 @@ function ModeButton({
   onClick: () => void;
 }) {
   return (
-    <button
+    <ButtonBase
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      style={{
+      sx={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '6px',
-        height: '32px',
-        padding: '0 10px',
-        border: 'none',
-        borderRadius: '4px',
-        background: active ? '#e8e8e8' : 'transparent',
-        color: '#444',
-        cursor: 'pointer',
-        fontSize: '13px',
+        gap: 0.75,
+        height: 32,
+        px: 1.25,
+        borderRadius: 0.5,
+        color: active ? 'text.primary' : 'text.secondary',
+        bgcolor: active ? 'action.selected' : 'transparent',
+        fontSize: 13,
         fontWeight: active ? 600 : 500,
         lineHeight: 1,
-        transition: 'background 0.15s',
-      }}
-      onMouseEnter={(e) => {
-        if (!active) e.currentTarget.style.background = '#f0f0f0';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = active ? '#e8e8e8' : 'transparent';
+        transition: 'background-color 0.15s',
+        '&:hover': {
+          bgcolor: active ? 'action.selected' : 'action.hover',
+        },
       }}
     >
       {icon}
       <span>{label}</span>
-    </button>
+    </ButtonBase>
   );
 }
