@@ -47,9 +47,15 @@ interface ToolbarProps {
   editor: Editor;
   groups: ToolbarGroup[];
   rightContent?: React.ReactNode;
+  /**
+   * Force every control into a disabled state (e.g. while content is streaming
+   * in). Buttons stay visible so the user can see that editing will be
+   * available, but no command can be triggered.
+   */
+  disabled?: boolean;
 }
 
-export function Toolbar({ editor, groups, rightContent }: ToolbarProps) {
+export function Toolbar({ editor, groups, rightContent, disabled = false }: ToolbarProps) {
   const [showLinkPopover, setShowLinkPopover] = useState(false);
   const linkAnchorRef = useRef<HTMLDivElement>(null);
 
@@ -60,24 +66,28 @@ export function Toolbar({ editor, groups, rightContent }: ToolbarProps) {
           label="Bold (Ctrl+B)"
           icon={<Bold size={ICON_SIZE} />}
           isActive={editor.isActive('bold')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleBold().run()}
         />
         <ToolbarButton
           label="Italic (Ctrl+I)"
           icon={<Italic size={ICON_SIZE} />}
           isActive={editor.isActive('italic')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleItalic().run()}
         />
         <ToolbarButton
           label="Strikethrough (Ctrl+Shift+X)"
           icon={<Strikethrough size={ICON_SIZE} />}
           isActive={editor.isActive('strike')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleStrike().run()}
         />
         <ToolbarButton
           label="Inline Code (Ctrl+E)"
           icon={<Code size={ICON_SIZE} />}
           isActive={editor.isActive('code')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleCode().run()}
         />
       </>
@@ -88,18 +98,21 @@ export function Toolbar({ editor, groups, rightContent }: ToolbarProps) {
           label="Heading 1 (Ctrl+Alt+1)"
           icon={<Heading1 size={ICON_SIZE} />}
           isActive={editor.isActive('heading', { level: 1 })}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         />
         <ToolbarButton
           label="Heading 2 (Ctrl+Alt+2)"
           icon={<Heading2 size={ICON_SIZE} />}
           isActive={editor.isActive('heading', { level: 2 })}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         />
         <ToolbarButton
           label="Heading 3 (Ctrl+Alt+3)"
           icon={<Heading3 size={ICON_SIZE} />}
           isActive={editor.isActive('heading', { level: 3 })}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         />
       </>
@@ -110,12 +123,14 @@ export function Toolbar({ editor, groups, rightContent }: ToolbarProps) {
           label="Bullet List (Ctrl+Shift+8)"
           icon={<List size={ICON_SIZE} />}
           isActive={editor.isActive('bulletList')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
         />
         <ToolbarButton
           label="Ordered List (Ctrl+Shift+7)"
           icon={<ListOrdered size={ICON_SIZE} />}
           isActive={editor.isActive('orderedList')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
         />
       </>
@@ -126,17 +141,20 @@ export function Toolbar({ editor, groups, rightContent }: ToolbarProps) {
           label="Blockquote (Ctrl+Shift+B)"
           icon={<Quote size={ICON_SIZE} />}
           isActive={editor.isActive('blockquote')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
         />
         <ToolbarButton
           label="Code Block (Ctrl+Alt+C)"
           icon={<SquareCode size={ICON_SIZE} />}
           isActive={editor.isActive('codeBlock')}
+          disabled={disabled}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         />
         <ToolbarButton
           label="Horizontal Rule"
           icon={<Minus size={ICON_SIZE} />}
+          disabled={disabled}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         />
       </>
@@ -147,12 +165,13 @@ export function Toolbar({ editor, groups, rightContent }: ToolbarProps) {
           label="Link (Ctrl+K)"
           icon={<LinkIcon size={ICON_SIZE} />}
           isActive={editor.isActive('link')}
+          disabled={disabled}
           onClick={() => setShowLinkPopover((s) => !s)}
         />
         <LinkPopover
           editor={editor}
           anchorEl={linkAnchorRef.current}
-          open={showLinkPopover}
+          open={showLinkPopover && !disabled}
           onClose={() => setShowLinkPopover(false)}
         />
       </Box>
@@ -163,13 +182,13 @@ export function Toolbar({ editor, groups, rightContent }: ToolbarProps) {
           label="Undo (Ctrl+Z)"
           icon={<Undo2 size={ICON_SIZE} />}
           onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
+          disabled={disabled || !editor.can().undo()}
         />
         <ToolbarButton
           label="Redo (Ctrl+Shift+Z)"
           icon={<Redo2 size={ICON_SIZE} />}
           onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
+          disabled={disabled || !editor.can().redo()}
         />
       </>
     ),

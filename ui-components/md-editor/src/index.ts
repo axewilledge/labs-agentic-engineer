@@ -17,11 +17,14 @@
  */
 
 export { MdEditor } from './MdEditor.js';
+export { MdStreamingEditor } from './MdStreamingEditor.js';
 export { MdDiffViewer } from './MdDiffViewer.js';
 export { useEditorStorage } from './hooks/useEditorStorage.js';
+export { completeIncompleteMarkdown } from './markdown/completeMarkdown.js';
 export { countLineChanges, type LineDiffCounts } from './diff/lineCounts.js';
 export type {
   MdEditorProps,
+  MdStreamingEditorProps,
   MdEditorRef,
   MdDiffViewerProps,
   ToolbarGroup,

@@ -95,6 +95,59 @@ export interface MdEditorProps {
   contentMaxWidth?: number | string;
 }
 
+export interface MdStreamingEditorProps {
+  /**
+   * The markdown content. Feed it the progressively-growing string from a model
+   * token stream — while `isStreaming` is true it is pushed into the editor on
+   * every change and rendered live as rich text. Controlled.
+   */
+  value: string;
+  /**
+   * Whether content is actively streaming. While `true` the editor is
+   * non-editable, a blinking caret is shown, and incomplete markdown is
+   * auto-completed. When it flips to `false` the editor becomes editable
+   * (unless `readOnly`) and `onStreamEnd` fires.
+   */
+  isStreaming: boolean;
+  /** Called with markdown on user edits after streaming has ended. */
+  onChange?: (markdown: string) => void;
+  /** Called once with the final markdown when streaming ends. */
+  onStreamEnd?: (markdown: string) => void;
+  /** Called on blur with final markdown string. */
+  onBlur?: (markdown: string) => void;
+  /** Keep the editor read-only even after streaming finishes. Default: false. */
+  readOnly?: boolean;
+  /**
+   * Auto-complete unterminated markdown tokens (open code fences, inline code,
+   * bold/italic/strikethrough, dangling links) while streaming. Default: true.
+   */
+  parseIncompleteMarkdown?: boolean;
+  /** Show the blinking streaming caret. Defaults to following `isStreaming`. */
+  showCaret?: boolean;
+  /** Keep the surface scrolled to the newest content while streaming. Default: true. */
+  autoScroll?: boolean;
+  /** Placeholder text when the editor is empty and editable. */
+  placeholder?: string;
+  /** Minimum height in pixels. Default: 200. */
+  minHeight?: number;
+  /** Maximum height in pixels (scrolls beyond). Default: none. */
+  maxHeight?: number;
+  /** Fill the parent's height and scroll only the content area. Overrides min/maxHeight. */
+  fillHeight?: boolean;
+  /** Show the formatting toolbar once the editor is editable (after streaming). Default: true. */
+  showToolbar?: boolean;
+  /** Which toolbar groups to display. Default: all groups. */
+  toolbarGroups?: ToolbarGroup[];
+  /** Optional content rendered on the right side of the toolbar. */
+  toolbarRightContent?: React.ReactNode;
+  /** Additional CSS class for the root container. */
+  className?: string;
+  /** Ref for imperative access to the editor. */
+  editorRef?: React.Ref<MdEditorRef>;
+  /** Max width of the editor content column. Default: `'816px'`; `'none'` fills the pane. */
+  contentMaxWidth?: number | string;
+}
+
 export interface MdDiffViewerProps {
   /** The original markdown content (before changes) */
   oldMarkdown: string;
