@@ -78,6 +78,11 @@ Features currently being built. One line each; **must be emptied on ship**
 (the line moves to the inventory below). If a line sits here for weeks,
 that's a stalled feature — investigate, don't ignore.
 
+- Settings → Skills — flat paginated catalogue: alphabetical list with inline
+  kind chips (blurb tooltips) replacing the four group sections; numbered
+  client-side pagination (10/page) + retained search —
+  [#172](https://github.com/wso2/labs-agentic-engineer/issues/172)
+  (no contract change)
 - Spec view — Build button invokes the build resource: commit-then-build
   (collab flush-on-demand → `POST /build`), lands on the overview; Build
   disabled with a tooltip while an agent turn runs —
@@ -89,6 +94,12 @@ that's a stalled feature — investigate, don't ignore.
   [#150](https://github.com/wso2/labs-agentic-engineer/issues/150)
   (no contract change; duplicate-generation guard deferred to
   [#151](https://github.com/wso2/labs-agentic-engineer/issues/151))
+- Onboarding — first-time credentials wizard for the default org (hard gate on
+  incomplete `GET /config`): GitHub PAT + Anthropic key, then auto skills-repo
+  bootstrap via extended `/skills/sync` —
+  [#102](https://github.com/wso2/labs-agentic-engineer/issues/102)
+  (BE handshake [#171](https://github.com/wso2/labs-agentic-engineer/issues/171);
+  ADR-0009)
 - Spec view — rich design rendering: component-grouped file list, whole-architecture
   cell diagram, per-component wireframes, and Swagger-style API Spec view
   (client-derived, read-only; no committed artifacts) —
