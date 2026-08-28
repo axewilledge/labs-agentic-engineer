@@ -92,6 +92,21 @@ export function ledgerStatus(
   }
 }
 
+/**
+ * Is the Duration cell still being measured against NOW?
+ *
+ * Deliberately keyed on the ABSENCE of `completedAt` rather than on
+ * `isLedgerLive`, because that is exactly the condition under which
+ * `buildDuration` falls back to `Date.now()`. Anything that renders such a
+ * duration has to re-render every second or the number freezes at whatever it
+ * was on first paint — which is what it did: react-query's structural sharing
+ * hands back an identical `BuildSummary` on every poll, so no poll ever caused
+ * a re-render and a running build's timer never moved.
+ */
+export function isDurationOpen(build: BuildSummary): boolean {
+  return Boolean(build.startedAt) && !build.completedAt;
+}
+
 /** Is this version moving? Drives the row tint and the ledger's poll. */
 export function isLedgerLive(build: BuildSummary): boolean {
   return build.status === "started" || build.status === "in_progress";
@@ -165,6 +180,28 @@ export function taskBreakdown(counts: TaskCounts | undefined): string {
   push(counts.blocked, "need config");
   push(counts.pending, "pending");
   return parts.length > 0 ? parts.join(" · ") : `${counts.total} total`;
+}
+
+/**
+ * Does the Deployments link belong on this version's card yet?
+ *
+ * A version reaches an environment when its tasks MERGE — before that the
+ * Deployments board has nothing to say about it, and offering the link invited
+ * the reader to go look at a page that could only disappoint them. So: every
+ * task in the build merged (`taskRowState` "done" is exactly
+ * `derivedStatus === "merged"`), or the deploy aggregate already names this
+ * version, which settles the question outright.
+ *
+ * `counts.total === 0` is NOT deployable: an empty count means the tag-scoped
+ * task read has not landed, and "all zero of them merged" is not a fact.
+ */
+export function isDeployable(
+  build: BuildSummary,
+  counts: TaskCounts,
+  deploy?: DeployStage | undefined,
+): boolean {
+  if (deploy?.version === build.tag) return true;
+  return counts.total > 0 && counts.done === counts.total;
 }
 
 /**

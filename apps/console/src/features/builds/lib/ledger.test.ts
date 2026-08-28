@@ -21,6 +21,8 @@ import type { components } from "../../../generated/aep-api";
 import {
   buildDuration,
   countTasks,
+  isDeployable,
+  isDurationOpen,
   isLedgerLive,
   ledgerDuration,
   ledgerStatus,
@@ -202,6 +204,54 @@ describe("buildDuration", () => {
 
   it("shows an em dash rather than an empty cell", () => {
     expect(ledgerDuration(build({ startedAt: "not-a-date" }))).toBe("—");
+  });
+});
+
+describe("isDurationOpen", () => {
+  it("is open exactly while the build has no end — that is when the clock is now", () => {
+    expect(isDurationOpen(build({ completedAt: null }))).toBe(true);
+    expect(isDurationOpen(build({ completedAt: "2026-08-14T16:38:04Z" }))).toBe(false);
+  });
+
+  it("stays open for a build the ledger no longer calls live", () => {
+    // The screenshot that reported this: `status` had already left
+    // started/in_progress, but `completedAt` was absent, so the Duration cell
+    // was still being measured against now — and had to keep counting.
+    // Keying the ticker on `isLedgerLive` would have frozen exactly this case.
+    const stray = build({ status: "completed", completedAt: null });
+    expect(isLedgerLive(stray)).toBe(false);
+    expect(isDurationOpen(stray)).toBe(true);
+  });
+
+  it("is closed when there is no span to measure at all", () => {
+    expect(isDurationOpen(build({ startedAt: "" }))).toBe(false);
+  });
+});
+
+describe("isDeployable", () => {
+  const counts = (total: number, done: number) => ({
+    ...countTasks([]),
+    total,
+    done,
+  });
+
+  it("withholds the Deployments link until every task has merged", () => {
+    // The reported bug: a version with 2 of 5 merged offered a link to a board
+    // that had nothing to show for it, right beside a note saying it deploys
+    // as its tasks merge.
+    expect(isDeployable(build(), counts(5, 2), undefined)).toBe(false);
+    expect(isDeployable(build(), counts(5, 5), undefined)).toBe(true);
+  });
+
+  it("does not read an unloaded task list as 'all merged'", () => {
+    expect(isDeployable(build(), counts(0, 0), undefined)).toBe(false);
+  });
+
+  it("offers the link regardless once the deploy names this version", () => {
+    // Whatever the task read says, a version the platform has deployed is on
+    // the Deployments board by definition.
+    expect(isDeployable(build({ tag: "v1" }), counts(5, 2), deploy({ version: "v1" }))).toBe(true);
+    expect(isDeployable(build({ tag: "v2" }), counts(5, 2), deploy({ version: "v1" }))).toBe(false);
   });
 });
 

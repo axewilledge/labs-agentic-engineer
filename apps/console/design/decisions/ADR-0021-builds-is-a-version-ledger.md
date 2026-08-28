@@ -96,6 +96,31 @@ dropdown, reading it, remembering it, and selecting the next one.
    redirect. Old `/builds/118` links keep working; the redirect now points the
    other way.*
 
+9. **A running duration needs a clock, and the Deployments link needs merged
+   work.** Two things the summary card got wrong, both worth writing down
+   because the obvious implementation of each is the wrong one.
+
+   The Duration counts against `Date.now()` until the build ends — but polling
+   alone never made it move. React-query's structural sharing hands back the
+   *same* `BuildSummary` object when the payload has not changed, and a running
+   build's payload does not change between its own state transitions, so no
+   refetch ever caused a re-render and the number sat frozen at first paint.
+   `useTicker` supplies the second. It is keyed on `isDurationOpen` — the
+   absence of `completedAt` — and NOT on `isLedgerLive`, because the absence of
+   an end stamp is exactly the condition under which the number is being
+   measured against now. A build that has left `in_progress` without an end
+   stamp is still counting, and keying on the status would freeze it. "and
+   counting" follows the same condition, for the same reason.
+
+   **"Go to Deployments" appears only once the version's work has merged.** A
+   version reaches an environment as its tasks merge, so before that the board
+   has nothing to say about it and the link could only disappoint — it sat one
+   line above a note reading *"v5 deploys as its tasks merge"*, contradicting
+   it. `isDeployable` is every task in the build merged, or the deploy
+   aggregate already naming this version. An **empty** task list is not
+   deployable: it means the tag-scoped read has not landed, and "all zero of
+   them merged" is not a fact.
+
 ## What this ADR does NOT cover
 
 The design handoff this came from also drew a two-column **Deployments** board, a
